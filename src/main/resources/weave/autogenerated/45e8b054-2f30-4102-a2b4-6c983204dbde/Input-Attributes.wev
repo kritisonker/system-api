@@ -1,0 +1,23 @@
+%dw 2.0
+
+type auto_45e8b054_2f30_4102_a2b4_6c983204dbde_Input_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {|  |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {| location?: "Lucknow" | "New Delhi" | "Pune" | "Mumbai" | "Bangalore" |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {|  |}, 
+  version: String, 
+  localAddress: String
+|}
+

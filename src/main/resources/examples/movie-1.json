@@ -1,0 +1,20 @@
+[{ 
+"movieid": 1,
+   "moviename": "Against the Ice",
+   "location": "Mumbai",
+   "showtype": "2D",
+   "language": "English",
+   "totalseats" : 80,
+   "availableseats" : 68,
+   "price": 200
+},
+{
+  "movieid": 2,
+  "moviename": "Bird Box",
+  "location":  "New Delhi",
+  "showtype": "2D",
+  "language": "English",
+  "totalseats" : 80,
+  "availableseats" : 70,
+  "price": 200
+  }]

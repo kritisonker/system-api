@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="implementation-suite.xml" />
+	<munit:test name="getMovies-test" doc:id="9978e4b4-937f-430b-ac12-20f0eed19644" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="cea45a55-436b-4835-89f3-f61191cf8b9d" processor="snowflake:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="094dd275-b06e-481d-829a-cd80321b7542" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://getMoviestest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getMoviestest\mock_variable_.dwl')]" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="baa09922-2b22-4c4d-bc4a-862ba4577351" >
+				<munit:payload value="#[readUrl('classpath://getMoviestest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getMoviestest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getMoviestest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getMovies" doc:id="ccbada99-e496-49c4-9597-4d4f0fac80a9" name="getMovies"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="94c8abbd-dadf-4c18-bba7-8ad64be343dd" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getMoviestest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="displayMovies-test" doc:id="acae1bc6-f5ed-4875-8bdc-bb88e0b6bd3f" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="cc1eb150-03d9-4750-9290-31c90e8e7f3d" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="712acaa2-b922-453e-bb2e-3c3d3f769e8e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="ac152abf-ac1e-43ee-a3bd-b31d2173dfba" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import displayMoviestest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="fbc23f7d-4595-449f-9018-36cb25423fc3" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import displayMoviestest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="1e69c521-fa8c-4e65-8447-55852988d61d" >
+				<munit:payload value="#[readUrl('classpath://displayMoviestest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://displayMoviestest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://displayMoviestest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to displayMovies" doc:id="5a25c612-216f-4ad3-8ed4-08decfd9b252" name="displayMovies"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="98b3ac2a-854b-452a-84b3-f74ae223ecef" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import displayMoviestest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify displayMovies" doc:id="97412845-5093-4ed3-b932-b81fbbd8f464" processor="snowflake:select" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c32c4386-c895-4b6b-8540-19deaf38049a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="a2f286af-254c-4ab0-9fbf-c9e963e92393" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="712acaa2-b922-453e-bb2e-3c3d3f769e8e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mainTicketorder-test" doc:id="e25a0248-22b1-4265-86e7-72bc9a0998eb" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="658b7a23-52a1-4667-9893-f5165c47b81e" >
+				<munit:payload value="#[readUrl('classpath://mainTicketordertest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://mainTicketordertest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://mainTicketordertest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mainTicketorder" doc:id="63f8c560-7245-47eb-bf20-058005be2bb6" name="mainTicketorder"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="0f8fa6d3-ce51-44fb-b401-3329871e047e" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import mainTicketordertest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="1e382c13-f531-43e8-9ff2-7aeea586d0fc" processor="logger" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="eb342331-a862-40b7-b06b-626a7fefa525" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify getMoviebyID Flow" doc:id="9cb877b3-f415-4766-804c-24a19b152254" processor="flow-ref" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="207ba983-a3d9-423c-a785-73a1ccaf04ed" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="2937b6e4-9641-4f21-878b-8c1934382716" processor="ee:transform" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3391350e-34e0-40f8-99c0-54c752797bb2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

@@ -1,0 +1,54 @@
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://soap.training.mulesoft.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="MovieOrderService" targetNamespace="http://soap.training.mulesoft.com/">
+<wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://soap.training.mulesoft.com/" elementFormDefault="unqualified" targetNamespace="http://soap.training.mulesoft.com/" version="1.0">
+<xs:element name="getOrder" type="tns:getOrder"/>
+<xs:element name="getOrderResponse" type="tns:getOrderResponse"/>
+<xs:complexType name="getOrder">
+<xs:sequence/>
+</xs:complexType>
+<xs:complexType name="getOrderResponse">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:order"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="order">
+<xs:sequence>
+<xs:element name="movieid" type="xs:int"/>
+<xs:element name="nooftickets" type="xs:int"/>
+<xs:element name="priceofticket" type="xs:int"/>
+<xs:element name="discountpercentage" type="xs:int"/>
+<xs:element name="availableseats" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="getOrderResponse">
+<wsdl:part element="tns:getOrderResponse" name="parameters"> </wsdl:part>
+</wsdl:message>
+<wsdl:message name="getOrder">
+<wsdl:part element="tns:getOrder" name="parameters"> </wsdl:part>
+</wsdl:message>
+<wsdl:portType name="MovieService">
+<wsdl:operation name="getOrder">
+<wsdl:input message="tns:getOrder" name="getOrder"> </wsdl:input>
+<wsdl:output message="tns:getOrderResponse" name="getOrderResponse"> </wsdl:output>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="MovieOrderServiceSoapBinding" type="tns:MovieService">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="getOrder">
+<soap:operation soapAction="" style="document"/>
+<wsdl:input name="getOrder">
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output name="getOrderResponse">
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="MovieOrderService">
+<wsdl:port binding="tns:MovieOrderServiceSoapBinding" name="MovieServicePort">
+<soap:address location="http://localhost:8081/api/ticketorder"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

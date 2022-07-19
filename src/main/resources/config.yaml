@@ -1,0 +1,19 @@
+http:
+  port: "8081"
+  
+snowflake:
+  accountname: "rd72500.ap-south-1.aws"
+  warehouse: "COMPUTE_WH"
+  database: "moviemanagement"
+  schema: "public"
+  user: "kritisonker"
+  password: "Kritisonker97*"
+  role: "ACCOUNTADMIN"
+
+
+wsdl:
+  wsdllocation: "movieorder.wsdl"
+  service: "MovieOrderService"
+  port: "MovieServicePort"
+  address: "http://localhost:8081/apiticketorder"
+  

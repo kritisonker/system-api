@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="moviemanagement-system-api-suite.xml" />
+	<munit:test name="get:\movies:moviemanagement-system-api-config-test" doc:id="39add8cb-9db7-456e-95c9-a373380a94bb" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="3c71693c-614d-43e1-b9d4-8391536f4ae7" >
+				<munit:payload value="#[readUrl('classpath://getmoviesmoviemanagementsystemapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getmoviesmoviemanagementsystemapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getmoviesmoviemanagementsystemapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\movies:moviemanagement-system-api-config" doc:id="a4f43c92-9792-41e6-846f-aaaf0b310c8e" name="get:\movies:moviemanagement-system-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="d298441d-d491-4f73-b672-4f0faaa6c174" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getmoviesmoviemanagementsystemapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="0a599974-2c6b-45b1-b784-81428fd26d14" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8a3b334a-0409-4ba8-b313-b79816fe356d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\displaytickets:moviemanagement-system-api-config-test" doc:id="cce92b87-f01e-4e10-893c-7887873e5f91" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="efa9d01c-e8a0-485b-b739-7e702252383b" >
+				<munit:payload value="#[readUrl('classpath://getdisplayticketsmoviemanagementsystemapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getdisplayticketsmoviemanagementsystemapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getdisplayticketsmoviemanagementsystemapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\displaytickets:moviemanagement-system-api-config" doc:id="98f844f8-5353-4126-93a2-5755ff2462ed" name="get:\displaytickets:moviemanagement-system-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="ffe7d802-db64-4564-9cdf-64ef69f9f8e2" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getdisplayticketsmoviemanagementsystemapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="12a71aa6-5720-4266-9f36-e86e91472d83" processor="flow-ref" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="938370a1-173c-44f1-9990-83a15c59d501" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\createmovie:application\json:moviemanagement-system-api-config-test" doc:id="215d0a83-7af0-4095-b4a2-24958ee06059" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="61bfc5ed-60b9-4fa2-9838-ee0ee86b4d86" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postcreatemovieapplicationjsonmoviemanagementsystemapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://postcreatemovieapplicationjsonmoviemanagementsystemapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postcreatemovieapplicationjsonmoviemanagementsystemapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\createmovie:application\json:moviemanagement-system-api-config" doc:id="6eda9bdb-5a67-4ee6-8f4b-71fa862e4405" name="post:\createmovie:application\json:moviemanagement-system-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="f472ee94-8c72-4c9f-8943-de5c0c68fea6" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postcreatemovieapplicationjsonmoviemanagementsystemapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="5c893f52-755f-479d-93fa-07a75e44eddb" processor="flow-ref" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a817b46c-a1e3-40d5-ad72-0f856fe3abe3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

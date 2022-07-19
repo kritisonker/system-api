@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_90d4370e_230a_413a_a431_89e100400afb_Output_Variables_outboundHeaders = {|  |}
+

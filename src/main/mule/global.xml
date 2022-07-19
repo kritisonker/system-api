@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:snowflake="http://www.mulesoft.org/schema/mule/snowflake"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/snowflake http://www.mulesoft.org/schema/mule/snowflake/current/mule-snowflake.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="0fd30f30-3590-4560-ba2a-abcb308bf041" file="config.yaml" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="620c4721-8a54-459d-938f-e724313509b6" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+	<configuration doc:name="Configuration" doc:id="1e01b5e0-7755-452d-b0b6-8005929b11e6" defaultErrorHandler-ref="globalError_Handler" />
+	<snowflake:snowflake-config name="Snowflake_Config1" doc:name="Snowflake Config" doc:id="a3331f61-eba8-48ab-942e-b463b82c33f7" >
+		<snowflake:snowflake-connection accountName="${snowflake.accountname}" warehouse="${snowflake.warehouse}" database="${snowflake.database}" schema="${snowflake.schema}" user="${snowflake.user}" password="${snowflake.password}" role="${snowflake.role}" />
+	</snowflake:snowflake-config>
+	<wsc:config name="Web_Service_Consumer_Config1" doc:name="Web Service Consumer Config" doc:id="a267fbbc-31fd-411d-9734-c6f8c5b3faea" >
+		<wsc:connection wsdlLocation="${wsdl.wsdllocation}" service="${wsdl.service}" port="${wsdl.port}" address="${wsdl.address}" />
+	</wsc:config>
+	<error-handler name="globalError_Handler" doc:id="02d8f332-121e-41ff-963f-634bd3d63087" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="252e8dd7-8ff5-43b2-8bdd-6c73aea447dc" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="1bcd9652-307d-4da6-9d95-1583f93f6be6" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":error.description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="500" doc:name="httpStatus" doc:id="41c21b35-6189-4114-8164-c4b21f159987" variableName="httpStatus"/>
+		</on-error-continue>
+	</error-handler>
+</mule>

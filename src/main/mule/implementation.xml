@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:snowflake="http://www.mulesoft.org/schema/mule/snowflake"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/snowflake http://www.mulesoft.org/schema/mule/snowflake/current/mule-snowflake.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="getMovies" doc:id="ad4ccf01-8791-43a4-b389-a1bf9f58665d" >
+		<snowflake:select doc:name="Get movies" doc:id="094dd275-b06e-481d-829a-cd80321b7542" config-ref="Snowflake_Config1">
+			<snowflake:sql ><![CDATA[select * from moviedetails;]]></snowflake:sql>
+		</snowflake:select>
+		<ee:transform doc:name="Transform Message" doc:id="0affe2bb-bc2a-4477-8dd3-2fba5828f79e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	movieID: payload01.MOVIEID,
+	moviename: payload01.MOVIENAME,
+	location: payload01.LOCATION,
+	showtype: payload01.SHOWTYPE default "",
+	language: payload01.LANGUAGE default "",
+	totalseats: payload01.TOTALSEATS default 0,
+	availableseats: payload01.AVAILABLESEATS default 0,
+	price: payload01.PRICE default 0
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="displayMovies" doc:id="45e8b054-2f30-4102-a2b4-6c983204dbde" >
+		<snowflake:select doc:name="displayMovies" doc:id="c32c4386-c895-4b6b-8540-19deaf38049a" config-ref="Snowflake_Config1">
+			<snowflake:sql ><![CDATA[select * from moviedetails
+where location=:location]]></snowflake:sql>
+			<snowflake:input-parameters ><![CDATA[#[{ 'location': attributes.queryParams.location}]]]></snowflake:input-parameters>
+		</snowflake:select>
+		<ee:transform doc:name="Transform Message" doc:id="712acaa2-b922-453e-bb2e-3c3d3f769e8e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	movieID: payload01.MOVIEID,
+	moviename: payload01.MOVIENAME,
+	location: payload01.LOCATION,
+	showtype: payload01.SHOWTYPE default "",
+	language: payload01.LANGUAGE default "",
+	totalseats: payload01.TOTALSEATS default 0,
+	availableseats: payload01.AVAILABLESEATS default 0,
+	price: payload01.PRICE default 0
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="createMovie" doc:id="90d4370e-230a-413a-a431-89e100400afb" >
+		<snowflake:insert doc:name="Creating movie" doc:id="1c0f5870-0cac-4d37-8740-1283076b9b91" config-ref="Snowflake_Config1">
+			<snowflake:sql ><![CDATA[insert into moviedetails (movieid, moviename, location, language, showtype, totalseats, availableseats, price)
+
+values( :movieid, :moviename, :location, :language, :showtype, :totalseats, :availableseats, :price)]]></snowflake:sql>
+			<snowflake:input-parameters ><![CDATA[#[{
+	movieid: 11,
+	moviename: payload.moviename,
+	location: payload.location,
+	language: payload.language,
+	showtype: payload.showtype,
+	totalseats: payload.totalseats,
+	availableseats: payload.availableseats,
+	price: payload.price
+	}]]]></snowflake:input-parameters>
+		</snowflake:insert>
+		<ee:transform doc:name="Transform Message" doc:id="08368ece-d7df-441e-8dd5-34582c81ded0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="orderTicket" doc:id="4d8b4978-932d-44f4-b0ba-b2c40540175e" >
+		<flow-ref doc:name="getTicketInfo Flow" doc:id="bf8287ae-86ab-48c1-8044-b8de73988990" name="getTicketInfo"/>
+		<wsc:consume operation="getOrder" doc:name="Consume" doc:id="b5d61740-f6b2-4804-a0cc-3b91c5a3c2d5" config-ref="Web_Service_Consumer_Config1"/>
+		<ee:transform doc:name="Transform Message" doc:id="0bc2e610-f8bc-4a40-9d55-7fdb1196bcc7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://soap.training.mulesoft.com/
+---
+payload.body.ns0#getOrderResponse.*return map ( return , indexOfReturn ) -> {
+	movieid: return.movieid,
+	nooftickets: return.nooftickets,
+	priceofticket: return.priceofticket,
+	discountpercentage: return.discountpercentage,
+	availableseats: return.availableseats
+} 
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	
+</flow>
+	<flow name="getMoviebyID" doc:id="a82ec2d4-619f-4788-92bc-5d377f078157" >
+		<snowflake:select doc:name="Select movieid and no of tickets" doc:id="f414549a-488d-41c9-9bf4-34f45ccec39f" config-ref="Snowflake_Config1">
+			<snowflake:sql ><![CDATA[select * from ticketorder
+where movieid=: movieid and nooftickets=:nooftickets;]]></snowflake:sql>
+			<snowflake:input-parameters ><![CDATA[#[{ 'movieid': attributes.queryParams.movieid ,
+   'nooftickets': attributes.queryParams.nooftickets
+}]]]></snowflake:input-parameters>
+		</snowflake:select>
+		<ee:transform doc:name="Transform Message" doc:id="ea35422e-d6e8-41a7-a69b-8b58c85ed3ac" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	movieid: payload01.MOVIEID,
+	nooftickets: payload01.NOOFTICKETS,
+	priceofticket: payload01.PRICEOFTICKET
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="mainTicketorder" doc:id="bff16cbf-cdad-4fb3-954d-de6a964b6362" >
+		<set-variable value="#[message.attributes.queryParams.movieid]" doc:name="Set Variable" doc:id="fa79797b-83c7-4280-9a2b-9e18a3422888" variableName="movieid variable"/>
+		<flow-ref doc:name="getMoviebyID Flow" doc:id="207ba983-a3d9-423c-a785-73a1ccaf04ed" name="getMoviebyID"/>
+		<choice doc:name="Choice" doc:id="685f87c3-0f13-4204-a624-1249957dcfc7" >
+			<when expression="#[sizeOf(payload)&gt;0]">
+				<ee:transform doc:name="Transform Message" doc:id="3391350e-34e0-40f8-99c0-54c752797bb2" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+
+output application/json
+---
+Price : (10*100)-((100*10))/100
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="cac06b81-5d35-4420-93bf-5b6673b09c3e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+Price: 100]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="eb342331-a862-40b7-b06b-626a7fefa525" message="endofflow"/>
+	</flow>
+	<flow name="getTicketInfo" doc:id="dac100da-9f2d-421b-920d-327f1208f35d" >
+		<snowflake:select doc:name="Select" doc:id="ff7eb938-ed8f-43a7-a8ad-4c2ad48a200a" config-ref="Snowflake_Config1">
+			<snowflake:sql ><![CDATA[select * from ticketorder;]]></snowflake:sql>
+		</snowflake:select>
+		<ee:transform doc:name="Transform Message" doc:id="b60a752a-1a19-451f-b3ac-f9508ed6bf50" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	movieid: payload01.MOVIEID,
+	nooftickets: payload01.NOOFTICKETS,
+	priceofticket: payload01.PRICEOFTICKET,
+	discountpercentage: payload01.DISCOUNTPERCENTAGE,
+	availableseats: payload01.AVAILABLESEATS default 0
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
